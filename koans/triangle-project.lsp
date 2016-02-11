@@ -16,9 +16,18 @@
 "you need to write the triangle method"
 
 (define-condition triangle-error  (error) ())
-
 (defun triangle (a b c)
-  :write-me)
+    (if (or (>= a (+ b c)) (>= b (+ a c)) (>= c (+ a b)))
+            (return-from triangle (make-condition 'triangle-error)))
+  (let ((number-equal (reduce #'+
+                        (mapcar
+                            (lambda (a b) (if (equal a b) 1 0))
+                            (list a b c)
+                            (list b c a)))))
+    (case number-equal (0 :scalene)
+                        (1 :isosceles)
+                        (3 :equilateral))))
+
 
 
 (define-test test-equilateral-triangles-have-equal-sides

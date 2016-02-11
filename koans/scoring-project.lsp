@@ -48,9 +48,27 @@
 ; More scoring examples are given in the tests below:
 ;
 ; Your goal is to write the score method.
+(defun marginal-value-counter (value-of-1 value-of-3)
+    (let ((count 0))
+        (lambda ()
+            (progn
+                (incf count)
+                (case count
+                    (3 (- value-of-3 (* 2 value-of-1)))
+                    (otherwise value-of-1))))))
+(defun marginal-value-getter ()
+    (let ((v1 (marginal-value-counter 100 1000))
+            (v2 (marginal-value-counter 0 200))
+            (v3 (marginal-value-counter 0 300))
+            (v4 (marginal-value-counter 0 400))
+            (v5 (marginal-value-counter 50 500))
+            (v6 (marginal-value-counter 0 600)))
 
+            (lambda (num) (funcall (case num (1 v1) (2 v2) (3 v3) (4 v4) (5 v5)
+                (6 v6))))))
 (defun score (dice)
-  ; You need to write this method
+    (let ((mv (marginal-value-getter)))
+        (reduce #'+ (mapcar (lambda (num) (funcall mv num)) dice)))
 )
 
 (define-test test-score-of-an-empty-list-is-zero
